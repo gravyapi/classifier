@@ -2,6 +2,8 @@
 # Copyright:: Copyright (c) 2005 Lucas Carlson
 # License::   LGPL
 
+#2013-09-18 jrm add laplacian smoothing as well tune to work with the concept of an empty category
+
 module Classifier
 
 class Bayes
@@ -61,17 +63,28 @@ class Bayes
 	# The largest of these scores (the one closest to 0) is the one picked out by #classify
 	def classifications(text)
 		score = Hash.new
+		
+		totals = total_words_hash()
+		word_count = totals.values.max    
+		
 		@categories.each do |category, category_words|
 			score[category.to_s] = 0
-			total = category_words.values.inject(0) {|sum, element| sum+element}
+			total = totals[category.to_s] + word_count
 			word_hash = text.word_hash
-			total += word_hash.count unless word_hash.nil?  # increase the denominator by the number of categories we are matching against to avoid penalty for sparse training data
 			word_hash.each do |word, count|
-				s = category_words.has_key?(word) ? category_words[word] : 0.1 # was .1 -- reduce penalty for missing categories
-				score[category.to_s] += Math.log(s/total.to_f)
+				s = category_words.has_key?(word) ? category_words[word] : 0
+				score[category.to_s] += Math.log((s+1)/(total.to_f+1))   #add laplacian smoothing
 			end
 		end
 		return score
+	end
+
+	def total_words_hash
+	  totals = {}
+		@categories.each do |category, category_words|
+			totals[category.to_s] = category_words.values.inject(0) {|sum, element| sum+element}
+		end
+		return totals
 	end
 
   #
