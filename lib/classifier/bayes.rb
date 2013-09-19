@@ -64,8 +64,14 @@ class Bayes
 	def classifications(text)
 		score = Hash.new
 		
+    #gather the total words per category
 		totals = total_words_hash()
-		word_count = totals.values.max    
+
+    #figure out the total number of features we are considering (words) in all categories
+    word_count = 0
+		totals.each do |category, n|
+		  word_count += n
+		end
 		
 		@categories.each do |category, category_words|
 			score[category.to_s] = 0

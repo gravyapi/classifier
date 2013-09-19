@@ -7,12 +7,13 @@ require 'rake/contrib/rubyforgepublisher'
 
 # 1.3.4   2013/9/10 JRM  -- reduce penalty for missing category -- makes work better for Gravy
 # 1.3.5 add laplacian smoothing
+# 1.3.6 tune
 
 # run rake package
 # gem install classifier-1.3.5.gem
 
 
-PKG_VERSION = "1.3.5"
+PKG_VERSION = "1.3.6"
 
 PKG_FILES = FileList[
     "lib/**/*", "bin/*", "test/**/*", "[A-Z]*", "Rakefile", "html/**/*"
